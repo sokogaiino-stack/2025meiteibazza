@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>文化祭 食品バザー メニュー</title>
+  <meta name="description" content="文化祭の食品バザー メニュー一覧（写真つき）" />
+  <style>
+    :root{
+      --bg:#f6f7fb;        /* 背景 */
+      --card:#ffffff;      /* カード */
+      --ink:#0f172a;       /* 文字 */
+      --muted:#64748b;     /* 補助文字 */
+      --accent:#16a34a;    /* アクセント（緑）*/
+      --accent-weak:#dcfce7;
+      --shadow:0 6px 18px rgba(16,24,40,.08);
+      --radius:18px;
+    }
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Arial, sans-serif;
+      -webkit-font-smoothing:antialiased; line-height:1.6;
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      background:linear-gradient(180deg,#ffffff 0%, rgba(255,255,255,.9) 70%, rgba(255,255,255,0) 100%);
+      backdrop-filter:saturate(1.2) blur(6px);
+      border-bottom:1px solid rgba(0,0,0,.04);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:20px;}
+    .hero{display:flex; align-items:center; gap:12px;}
+    .dot{width:14px; height:14px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px var(--accent-weak);} 
+    h1{font-size:clamp(22px,3.5vw,32px); margin:0;}
+    .sub{color:var(--muted); font-size:14px;}
+
+    .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    .input{flex:1 1 220px; display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border-radius:12px; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,.06)}
+    .input input{border:0; outline:0; width:100%; font-size:14px}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:var(--accent-weak); color:#065f46; border-radius:999px; font-size:12px;}
+
+    main{padding:10px 20px 48px}
+    .grid{max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px}
+
+    .card{background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); display:flex; flex-direction:column;}
+    .thumb{position:relative; aspect-ratio:4/3; background:#eef2ff; overflow:hidden}
+    .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+    .soldout{position:absolute; inset:auto 10px 10px auto; background:#ef4444; color:#fff; font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:0 6px 14px rgba(239,68,68,.25)}
+    .body{padding:14px 14px 16px; display:grid; grid-template-columns:1fr auto; align-items:start; gap:6px 10px}
+    .team{grid-column:1 / -1; color:var(--muted); font-size:12px}
+    .name{font-weight:700; font-size:18px}
+    .price{font-weight:800; font-size:18px; color:#065f46;}
+    .note{grid-column:1 / -1; font-size:12px; color:var(--muted)}
+
+    footer{max-width:1100px; margin:16px auto 44px; color:var(--muted); font-size:12px; text-align:center}
+
+    /* 印刷時（ポスター代わり） */
+    @media print{
+      header{position:static; box-shadow:none}
+      .controls{display:none}
+      body{background:#fff}
+      .grid{gap:12px}
+      .card{break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <span class="dot" aria-hidden="true"></span>
+        <div>
+          <h1>文化祭 食品バザー メニュー</h1>
+          <div class="sub">写真つき・価格表示／スマホで見やすいレスポンシブ</div>
+        </div>
+        <span class="badge" id="countBadge" aria-live="polite"></span>
+      </div>
+      <div class="controls">
+        <label class="input" title="メニューやチーム名で検索">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="#64748b" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#64748b" stroke-width="2"/></svg>
+          <input id="q" placeholder="メニュー名やチーム名で検索…（例：焼きそば）" />
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </main>
+
+  <footer>
+    最終更新：<span id="updated"></span>　|　© 文化祭実行委員会
+  </footer>
+
+  <script>
+    // ================================
+    // ▼▼ ここだけ編集すればOK！ ▼▼
+    // 画像は /img フォルダに入れて、下の img に相対パスを書く。
+    // soldOut を true にすると「SOLD OUT」表示。
+    const ITEMS = [
+      { team: "1組 チーム青空", name: "焼きそば", price: 400, img: "img/yakisoba.jpg", soldOut:false, note:"" },
+      { team: "2組 チームひまわり", name: "フランクフルト", price: 300, img: "img/frankfurt.jpg", soldOut:false, note:"" },
+      { team: "3組 チームおにぎり", name: "おにぎり（鮭・梅）", price: 200, img: "img/onigiri.jpg", soldOut:false, note:"2個セット" },
+      { team: "4組 チームレモネード", name: "レモネード", price: 250, img: "img/lemonade.jpg", soldOut:false, note:"" },
+      { team: "5組 チームポテト", name: "フライドポテト", price: 300, img: "img/fries.jpg", soldOut:false, note:"塩/コンソメ" },
+      { team: "6組 チームクレープ", name: "クレープ（チョコ/バナナ）", price: 450, img: "img/crepe.jpg", soldOut:false, note:"" },
+    ];
+    // ▲▲ 編集ここまで ▲▲
+    // ================================
+
+    const grid = document.getElementById('grid');
+    const q = document.getElementById('q');
+    const badge = document.getElementById('countBadge');
+
+    function yen(n){ return `¥${Number(n).toLocaleString('ja-JP')}`; }
+
+    function cardHTML(item){
+      const alt = `${item.name}（${item.team}）`;
+      return `
+        <article class="card" role="article">
+          <div class="thumb">
+            <img src="${item.img}" alt="${alt}" onerror="this.style.display='none'; this.parentElement.style.display='grid'; this.parentElement.style.placeItems='center'; this.parentElement.innerHTML='<div style=\'color:#64748b; font-size:13px;\'>画像がありません</div>'">
+            ${item.soldOut ? '<div class="soldout" aria-label="売り切れ">SOLD OUT</div>' : ''}
+          </div>
+          <div class="body">
+            <div class="team">${item.team}</div>
+            <div class="name">${item.name}</div>
+            <div class="price">${yen(item.price)}</div>
+            ${item.note ? `<div class="note">${item.note}</div>`: ''}
+          </div>
+        </article>`;
+    }
+
+    function render(list){
+      grid.innerHTML = list.map(cardHTML).join('');
+      badge.textContent = `${list.length} 件表示中`;
+    }
+
+    function normalize(s){ return s.toString().toLowerCase(); }
+
+    function doFilter(){
+      const v = normalize(q.value || '');
+      const filtered = ITEMS.filter(it => normalize(it.team+it.name+it.note).includes(v));
+      render(filtered);
+    }
+
+    q.addEventListener('input', doFilter);
+
+    // 初期表示
+    render(ITEMS);
+
+    // 更新日表示（手直し不要）
+    const updated = document.getElementById('updated');
+    // build 時刻がないので、ページ読み込み時刻を表示
+    const now = new Date();
+    updated.textContent = now.toLocaleString('ja-JP');
+  </script>
+</body>
+</html>
