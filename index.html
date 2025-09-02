@@ -56,7 +56,8 @@
     .ov-team{opacity:.85; font-size:12px; margin-bottom:4px}
     .ov-name{font-weight:800; font-size:20px; line-height:1.2}
     .ov-price{font-weight:900; font-size:18px; margin-top:6px}
-    .ov-note{opacity:.9; font-size:12px; margin-top:4px} 
+    .ov-note{opacity:.9; font-size:12px; margin-top:4px}
+    .ov-desc{opacity:.95; font-size:13px; margin-top:8px; line-height:1.55} 
     .soldout{position:absolute; inset:auto 10px 10px auto; background:#ef4444; color:#fff; font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:0 6px 14px rgba(239,68,68,.25)}
     .body{padding:14px 14px 16px; display:grid; grid-template-columns:1fr auto; align-items:start; gap:6px 10px}
     .team{grid-column:1 / -1; color:var(--muted); font-size:12px}
@@ -102,13 +103,16 @@
   <script>
 (function(){
   // ====== データ ======
+  // ▼▼ ここだけ編集すればOK！ ▼▼
+  // オーバーレイ（画像タップで表示）に出す自由記述文は desc に書きます。
+  // 改行はそのまま反映されます（複数行OK）。空文字の場合はオーバーレイに説明は出ません。
   var ITEMS = [
-    { team: "1A", name: "やきそば",       price: 100, img: "img/1a.png", soldOut:false, note:"" },
-    { team: "1B", name: "お好み焼き",     price: 100, img: "img/1b.png", soldOut:false, note:"1枚" },
-    { team: "2A", name: "からあげ",       price: 200, img: "img/2a.png", soldOut:false, note:"5個入り" },
-    { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.png", soldOut:false, note:"1本" },
-    { team: "3A", name: "みたらし団子",   price: 200, img: "img/3a.png", soldOut:false, note:"3本入り" },
-    { team: "4A", name: "わたあめ",       price: 100, img: "img/4a.png", soldOut:false, note:"" }
+    { team: "1A", name: "やきそば",       price: 100, img: "img/1a.png", soldOut:false, note:"",      desc:"" },
+    { team: "1B", name: "お好み焼き",     price: 100, img: "img/1b.png", soldOut:false, note:"1枚",   desc:"" },
+    { team: "2A", name: "からあげ",       price: 200, img: "img/2a.png", soldOut:false, note:"5個入り",desc:"" },
+    { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.png", soldOut:false, note:"1本",  desc:"" },
+    { team: "3A", name: "みたらし団子",   price: 200, img: "img/3a.png", soldOut:false, note:"3本入り",desc:"" },
+    { team: "4A", name: "わたあめ",       price: 100, img: "img/4a.png", soldOut:false, note:"",      desc:"" }
   ];
 
   var grid   = document.getElementById('grid');
@@ -123,29 +127,28 @@
 
   function cardHTML(item){
     var alt = escapeHtml(item.name + '（' + item.team + '）');
-    var noteOverlay = item.note ? '<div class="ov-note">'+ escapeHtml(item.note) +'</div>' : '';
-    var noteBody    = item.note ? '<div class="note">'+ escapeHtml(item.note) +'</div>' : '';
-    return ''+
+    var noteBody = item.note ? '<div class="note">'+ escapeHtml(item.note) +'</div>' : '';
+    var descHtml = item.desc ? '<div class="ov-desc">'+ escapeHtml(item.desc).replace(/
+/g,'<br>') +'</div>' : '';
+    var html = ''+
       '<article class="card" role="article">'+
         '<div class="thumb" tabindex="0" role="button" aria-label="'+ alt +'の説明を表示" aria-expanded="false">'+
-          '<img src="'+ item.img +'" alt="'+ alt +'" onerror="this.style.display=\'none\'; this.parentElement.style.display=\'grid\'; this.parentElement.style.placeItems=\'center\'; this.parentElement.innerHTML=\'<div style=\'color:#64748b; font-size:13px;\'>画像がありません</div>\'">'+
+          '<img src="'+ item.img +'" alt="'+ alt +'">'+
           (item.soldOut ? '<div class="soldout" aria-label="売り切れ">SOLD OUT</div>' : '')+
           '<div class="overlay">'+
-            '<div class="ov-body">'+
-              '<div class="ov-team">'+ escapeHtml(item.team) +'</div>'+
-              '<div class="ov-name">'+ escapeHtml(item.name) +'</div>'+
-              '<div class="ov-price">'+ yen(item.price) +'</div>'+ noteOverlay +
-              '<div class="ov-hint" style="opacity:.8; font-size:11px; margin-top:8px;">タップでもう一度閉じる</div>'+ 
-            '</div>'+ 
-          '</div>'+ 
-        '</div>'+ 
+            '<div class="ov-body">'+ descHtml +
+              '<div class="ov-hint" style="opacity:.8; font-size:11px; margin-top:8px;">タップでもう一度閉じる</div>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
         '<div class="body">'+
-          '<div class="team">'+ escapeHtml(item.team) +'</div>'+ 
-          '<div class="name">'+ escapeHtml(item.name) +'</div>'+ 
-          '<div class="price">'+ yen(item.price) +'</div>'+ 
-          noteBody +
-        '</div>'+ 
+          '<div class="team">'+ escapeHtml(item.team) +'</div>'+
+          '<div class="name">'+ escapeHtml(item.name) +'</div>'+
+          '<div class="price">'+ yen(item.price) +'</div>'+
+          noteBody+
+        '</div>'+
       '</article>';
+    return html;
   }
 
   function bindThumbToggles(){
