@@ -125,14 +125,14 @@
       return `
         <article class=\"card\" role=\"article\">
           <div class=\"thumb\" tabindex=\"0\" role=\"button\" aria-label=\"${alt}の説明を表示\" aria-expanded=\"false\">
-            <img src=\"${item.img}\" alt=\"${alt}\" onerror=\"this.style.display='none'; this.parentElement.style.display='grid'; this.parentElement.style.placeItems='center'; this.parentElement.innerHTML='<div style=\\'color:#64748b; font-size:13px;\\'>画像がありません</div>'\">
+            <img src=\"${item.img}\" alt=\"${alt}\" onerror=\"this.style.display='none'; this.parentElement.style.display='grid'; this.parentElement.style.placeItems='center'; this.parentElement.innerHTML='<div style=\'color:#64748b; font-size:13px;\'>画像がありません</div>'\">
             ${item.soldOut ? '<div class=\"soldout\" aria-label=\"売り切れ\">SOLD OUT</div>' : ''}
             <div class=\"overlay\">
               <div class=\"ov-body\">
                 <div class=\"ov-team\">${item.team}</div>
                 <div class=\"ov-name\">${item.name}</div>
                 <div class=\"ov-price\">${yen(item.price)}</div>
-                ${item.note ? `<div class=\\"ov-note\\">${item.note}</div>`: ''}
+                ${item.note ? `<div class=\"ov-note\">${item.note}</div>`: ''}
                 <div class=\"ov-hint\" style=\"opacity:.8; font-size:11px; margin-top:8px;\">タップでもう一度閉じる</div>
               </div>
             </div>
@@ -141,7 +141,7 @@
             <div class=\"team\">${item.team}</div>
             <div class=\"name\">${item.name}</div>
             <div class=\"price\">${yen(item.price)}</div>
-            ${item.note ? `<div class=\\"note\\">${item.note}</div>`: ''}
+            ${item.note ? `<div class=\"note\">${item.note}</div>`: ''}
           </div>
         </article>`;
     }（${item.team}）`;
