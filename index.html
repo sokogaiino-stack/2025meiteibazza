@@ -31,7 +31,12 @@
     .hero{display:flex; align-items:center; gap:12px;}
     .dot{width:14px; height:14px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px var(--accent-weak);} 
     h1{font-size:clamp(22px,3.5vw,32px); margin:0;}
-    .sub{color:var(--muted); font-size:14px;}
+    .sub{color:var(--muted); font-size:14px;} 
+    details.accordion{margin-top:10px; background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:12px; box-shadow:var(--shadow);} 
+    details.accordion > summary{cursor:pointer; list-style:none; padding:10px 14px; font-weight:700;}
+    details.accordion > summary::-webkit-details-marker{display:none}
+    details.accordion .acc-body{padding:0 14px 12px; color:var(--muted); font-size:14px;}
+    details.accordion[open] > summary{border-bottom:1px solid rgba(0,0,0,.06);} 
 
     .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
     .input{flex:1 1 220px; display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border-radius:12px; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,.06)}
@@ -42,8 +47,16 @@
     .grid{max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px}
 
     .card{background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); display:flex; flex-direction:column;}
-    .thumb{position:relative; aspect-ratio:4/3; background:#eef2ff; overflow:hidden}
+    .thumb{position:relative; aspect-ratio:4/3; background:#eef2ff; overflow:hidden; cursor:pointer}
     .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+    .thumb:focus{outline:2px solid var(--accent); outline-offset:2px}
+    .thumb .overlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,23,42,.6); color:#fff; padding:14px; text-align:center}
+    .thumb.show .overlay{display:flex}
+    .ov-body{max-width:90%}
+    .ov-team{opacity:.85; font-size:12px; margin-bottom:4px}
+    .ov-name{font-weight:800; font-size:20px; line-height:1.2}
+    .ov-price{font-weight:900; font-size:18px; margin-top:6px}
+    .ov-note{opacity:.9; font-size:12px; margin-top:4px} 
     .soldout{position:absolute; inset:auto 10px 10px auto; background:#ef4444; color:#fff; font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:0 6px 14px rgba(239,68,68,.25)}
     .body{padding:14px 14px 16px; display:grid; grid-template-columns:1fr auto; align-items:start; gap:6px 10px}
     .team{grid-column:1 / -1; color:var(--muted); font-size:12px}
@@ -70,7 +83,7 @@
         <span class="dot" aria-hidden="true"></span>
         <div>
           <h1>Cultural Festival Food Bazaar Menu</h1>
-          <div class="sub">当日までに価格や分量等の変更があるかもしれません。また、売り切れてにつき販売ができない場合があります。</div>
+          <details class="accordion"><summary>はじめに</summary><div class="acc-body">毎年食品バザーにお越しいただきありがとうございます。材料の仕入れの関係により想定より早く売り切れてしまい販売ができない場合があります。その場合は後日返金可となっているのでチケットの返金にお越しください。また、当日までに分量や値段・画像撮影時から盛り付け等の変更がある場合があります。随時更新はしますが更新が間に合っていない場合はご容赦下さい。</div></details>
         </div>
         <span class="badge" id="countBadge" aria-live="polite"></span>
       </div>
@@ -92,12 +105,12 @@
     // 画像は /img フォルダに入れて、下の img に相対パスを書く。
     // soldOut を true にすると「SOLD OUT」表示。
     const ITEMS = [
-      { team: "1A", name: "やきそば", price: 100, img: "img/1a.png", soldOut:false, note:"" },
-      { team: "1B", name: "お好み焼き", price: 100, img: "img/1b.png", soldOut:false, note:"1枚" },
-      { team: "2A", name: "からあげ", price: 200, img: "img/2a.png", soldOut:false, note:"5個入り" },
-      { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.png", soldOut:false, note:"1本" },
-      { team: "3A", name: "みたらし団子", price: 200, img: "img/3a.png", soldOut:false, note:"3本入り" },
-      { team: "4A", name: "わたあめ", price: 100, img: "img/4a.png", soldOut:false, note:"" },
+      { team: "1A", name: "やきそば", price: 100, img: "img/1a.jpg", soldOut:false, note:"" },
+      { team: "1B", name: "お好み焼き", price: 100, img: "img/1b.jpg", soldOut:false, note:"1枚" },
+      { team: "2A", name: "からあげ", price: 200, img: "img/2a.jpg", soldOut:false, note:"5個入り" },
+      { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.jpg", soldOut:false, note:"1本" },
+      { team: "3A", name: "みたらし団子", price: 200, img: "img/3a.jpg", soldOut:false, note:"3本入り" },
+      { team: "4A", name: "わたあめ", price: 100, img: "img/4a.jpg", soldOut:false, note:"" },
     ];
     // ▲▲ 編集ここまで ▲▲
     // ================================
@@ -109,6 +122,29 @@
 
     function cardHTML(item){
       const alt = `${item.name}（${item.team}）`;
+      return `
+        <article class=\"card\" role=\"article\">
+          <div class=\"thumb\" tabindex=\"0\" role=\"button\" aria-label=\"${alt}の説明を表示\" aria-expanded=\"false\">
+            <img src=\"${item.img}\" alt=\"${alt}\" onerror=\"this.style.display='none'; this.parentElement.style.display='grid'; this.parentElement.style.placeItems='center'; this.parentElement.innerHTML='<div style=\\'color:#64748b; font-size:13px;\\'>画像がありません</div>'\">
+            ${item.soldOut ? '<div class=\"soldout\" aria-label=\"売り切れ\">SOLD OUT</div>' : ''}
+            <div class=\"overlay\">
+              <div class=\"ov-body\">
+                <div class=\"ov-team\">${item.team}</div>
+                <div class=\"ov-name\">${item.name}</div>
+                <div class=\"ov-price\">${yen(item.price)}</div>
+                ${item.note ? `<div class=\\"ov-note\\">${item.note}</div>`: ''}
+                <div class=\"ov-hint\" style=\"opacity:.8; font-size:11px; margin-top:8px;\">タップでもう一度閉じる</div>
+              </div>
+            </div>
+          </div>
+          <div class=\"body\">
+            <div class=\"team\">${item.team}</div>
+            <div class=\"name\">${item.name}</div>
+            <div class=\"price\">${yen(item.price)}</div>
+            ${item.note ? `<div class=\\"note\\">${item.note}</div>`: ''}
+          </div>
+        </article>`;
+    }（${item.team}）`;
       return `
         <article class="card" role="article">
           <div class="thumb">
@@ -127,9 +163,24 @@
     function render(list){
       grid.innerHTML = list.map(cardHTML).join('');
       badge.textContent = `${list.length} 件表示中`;
+      bindThumbToggles();
+    } 件表示中`;
     }
 
     function normalize(s){ return s.toString().toLowerCase(); }
+
+    function bindThumbToggles(){
+      document.querySelectorAll('.thumb').forEach(el=>{
+        const toggle=()=>{
+          const isOpen = el.classList.toggle('show');
+          el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        };
+        el.addEventListener('click', toggle);
+        el.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+        });
+      });
+    }
 
     // 初期表示
     render(ITEMS);
