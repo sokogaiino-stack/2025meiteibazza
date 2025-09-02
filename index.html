@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>文化祭 食品バザー メニュー</title>
+  <title>Cultural Festival Food Bazaar Menu</title>
   <meta name="description" content="文化祭の食品バザー メニュー一覧（写真つき）" />
   <style>
     :root{
@@ -17,31 +17,13 @@
       --radius:18px;
     }
     html,body{height:100%}
-    body{
-      margin:0; background:var(--bg); color:var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Arial, sans-serif;
-      -webkit-font-smoothing:antialiased; line-height:1.6;
-    }
-    header{
-      position:sticky; top:0; z-index:20;
-      background:linear-gradient(180deg,#ffffff 0%, rgba(255,255,255,.9) 70%, rgba(255,255,255,0) 100%);
-      backdrop-filter:saturate(1.2) blur(6px);
-      border-bottom:1px solid rgba(0,0,0,.04);
-    }
+    body{margin:0; background:var(--bg); color:var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", Arial, sans-serif; -webkit-font-smoothing:antialiased; line-height:1.6;}
+    header{position:sticky; top:0; z-index:20; background:linear-gradient(180deg,#ffffff 0%, rgba(255,255,255,.9) 70%, rgba(255,255,255,0) 100%); backdrop-filter:saturate(1.2) blur(6px); border-bottom:1px solid rgba(0,0,0,.04);}
     .wrap{max-width:1100px; margin:0 auto; padding:20px;}
     .hero{display:flex; align-items:center; gap:12px;}
     .dot{width:14px; height:14px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px var(--accent-weak);} 
     h1{font-size:clamp(22px,3.5vw,32px); margin:0;}
-    .sub{color:var(--muted); font-size:14px;} 
-    details.accordion{margin-top:10px; background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:12px; box-shadow:var(--shadow);} 
-    details.accordion > summary{cursor:pointer; list-style:none; padding:10px 14px; font-weight:700;}
-    details.accordion > summary::-webkit-details-marker{display:none}
-    details.accordion .acc-body{padding:0 14px 12px; color:var(--muted); font-size:14px;}
-    details.accordion[open] > summary{border-bottom:1px solid rgba(0,0,0,.06);} 
-
-    .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
-    .input{flex:1 1 220px; display:flex; align-items:center; gap:8px; background:#fff; padding:10px 12px; border-radius:12px; box-shadow: var(--shadow); border:1px solid rgba(0,0,0,.06)}
-    .input input{border:0; outline:0; width:100%; font-size:14px}
-    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:var(--accent-weak); color:#065f46; border-radius:999px; font-size:12px;}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; background:var(--accent-weak); color:#065f46; border-radius:999px; font-size:12px; margin-left:auto}
 
     main{padding:10px 20px 48px}
     .grid{max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px}
@@ -50,14 +32,19 @@
     .thumb{position:relative; aspect-ratio:4/3; background:#eef2ff; overflow:hidden; cursor:pointer}
     .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
     .thumb:focus{outline:2px solid var(--accent); outline-offset:2px}
-    .thumb .overlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,23,42,.6); color:#fff; padding:14px; text-align:center}
+
+    .overlay{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(15,23,42,.6); color:#fff; padding:14px; text-align:center}
     .thumb.show .overlay{display:flex}
-    .ov-body{max-width:90%}
+    .ov-body{max-width:90%; max-height:70vh; overflow:auto}
     .ov-team{opacity:.85; font-size:12px; margin-bottom:4px}
     .ov-name{font-weight:800; font-size:20px; line-height:1.2}
     .ov-price{font-weight:900; font-size:18px; margin-top:6px}
-    .ov-note{opacity:.9; font-size:12px; margin-top:4px} 
+    .ov-note{opacity:.9; font-size:12px; margin-top:4px}
+    .ov-desc{opacity:.95; font-size:13px; margin-top:6px; line-height:1.55; white-space:pre-line}
+    .ov-hint{opacity:.8; font-size:11px; margin-top:8px}
+
     .soldout{position:absolute; inset:auto 10px 10px auto; background:#ef4444; color:#fff; font-weight:700; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:0 6px 14px rgba(239,68,68,.25)}
+
     .body{padding:14px 14px 16px; display:grid; grid-template-columns:1fr auto; align-items:start; gap:6px 10px}
     .team{grid-column:1 / -1; color:var(--muted); font-size:12px}
     .name{font-weight:700; font-size:18px}
@@ -66,28 +53,28 @@
 
     footer{max-width:1100px; margin:16px auto 44px; color:var(--muted); font-size:12px; text-align:center}
 
-    /* 印刷時（ポスター代わり） */
-    @media print{
-      header{position:static; box-shadow:none}
-      .controls{display:none}
-      body{background:#fff}
-      .grid{gap:12px}
-      .card{break-inside:avoid}
-    }
+    /* details 折りたたみ（はじめに） */
+    details.accordion{margin-top:10px; background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:12px; box-shadow:var(--shadow);} 
+    details.accordion > summary{cursor:pointer; list-style:none; padding:10px 14px; font-weight:700;}
+    details.accordion > summary::-webkit-details-marker{display:none}
+    details.accordion .acc-body{padding:0 14px 12px; color:#334155; font-size:14px;}
+    details.accordion[open] > summary{border-bottom:1px solid rgba(0,0,0,.06);} 
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <div class="hero">
+      <div class="hero" style="gap:12px; align-items:flex-start;">
         <span class="dot" aria-hidden="true"></span>
-        <div>
-          <h1>Cultural Festival Food Bazaar Menu</h1>
-          <details class="accordion"><summary>はじめに</summary><div class="acc-body">毎年食品バザーにお越しいただきありがとうございます。材料の仕入れの関係により想定より早く売り切れてしまい販売ができない場合があります。その場合は後日返金可となっているのでチケットの返金にお越しください。また、当日までに分量や値段・画像撮影時から盛り付け等の変更がある場合があります。随時更新はしますが更新が間に合っていない場合はご容赦下さい。</div></details>
+        <div style="flex:1 1 auto; min-width:0;">
+          <h1 style="margin-bottom:6px;">Cultural Festival Food Bazaar Menu</h1>
+          <details class="accordion">
+            <summary>はじめに</summary>
+            <div class="acc-body">毎年食品バザーにお越しいただきありがとうございます。材料の仕入れの関係により想定より早く売り切れてしまい販売ができない場合があります。その場合は後日返金可となっているのでチケットの返金にお越しください。また、当日までに分量や値段・画像撮影時から盛り付け等の変更がある場合があります。随時更新はしますが更新が間に合っていない場合はご容赦下さい。</div>
+          </details>
         </div>
-        <span class="badge" id="countBadge" aria-live="polite"></span>
+        <span class="badge" id="countBadge">—</span>
       </div>
-      
     </div>
   </header>
 
@@ -100,87 +87,94 @@
   </footer>
 
   <script>
-(function(){
-  // ====== データ ======
-  var ITEMS = [
-    { team: "1A", name: "やきそば",       price: 100, img: "img/1a.png", soldOut:false, note:"" },
-    { team: "1B", name: "お好み焼き",     price: 100, img: "img/1b.png", soldOut:false, note:"1枚" },
-    { team: "2A", name: "からあげ",       price: 200, img: "img/2a.png", soldOut:false, note:"5個入り" },
-    { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.png", soldOut:false, note:"1本" },
-    { team: "3A", name: "みたらし団子",   price: 200, img: "img/3a.png", soldOut:false, note:"3本入り" },
-    { team: "4A", name: "わたあめ",       price: 100, img: "img/4a.png", soldOut:false, note:"" }
-  ];
+  (function(){
+    // ====== データ（ここだけ編集すればOK！）======
+    var ITEMS = [
+      { team: "1A", name: "やきそば",       price: 100, img: "img/1a.png", soldOut:false, note:"",       desc:"文化祭といえばやきそばですよね！ソースにこだわって作りました。ピリ辛ソースをぜひご賞味ください！売り切れるまえにぜひ！" },
+      { team: "1B", name: "お好み焼き",     price: 100, img: "img/1b.png", soldOut:false, note:"1枚",    desc:"ためしの1b" },
+      { team: "2A", name: "からあげ",       price: 200, img: "img/2a.png", soldOut:false, note:"5個入り",desc:"ためしの2a" },
+      { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.png", soldOut:false, note:"1本",  desc:"ためしの2b" },
+      { team: "3A", name: "みたらし団子",   price: 200, img: "img/3a.png", soldOut:false, note:"3本入り",desc:"ためしの3a" },
+      { team: "4A", name: "わたあめ",       price: 100, img: "img/4a.png", soldOut:false, note:"",       desc:"ためしの4a" }
+    ];
+    // ============================================
 
-  var grid   = document.getElementById('grid');
-  var badge  = document.getElementById('countBadge');
+    var grid  = document.getElementById('grid');
+    var badge = document.getElementById('countBadge');
 
-  function yen(n){ return '¥' + Number(n).toLocaleString('ja-JP'); }
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, function(c){
-      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]);
-    });
-  }
+    function yen(n){ return '¥' + Number(n).toLocaleString('ja-JP'); }
+    function el(tag, attrs, children){
+      var e = document.createElement(tag);
+      if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (children) for (var i=0;i<children.length;i++) e.appendChild(children[i]);
+      return e;
+    }
+    function txt(s){ return document.createTextNode(s); }
 
-  function cardHTML(item){
-    var alt = escapeHtml(item.name + '（' + item.team + '）');
-    var noteOverlay = item.note ? '<div class="ov-note">'+ escapeHtml(item.note) +'</div>' : '';
-    var noteBody    = item.note ? '<div class="note">'+ escapeHtml(item.note) +'</div>' : '';
-    return ''+
-      '<article class="card" role="article">'+
-        '<div class="thumb" tabindex="0" role="button" aria-label="'+ alt +'の説明を表示" aria-expanded="false">'+
-          '<img src="'+ item.img +'" alt="'+ alt +'" onerror="this.style.display=\'none\'; this.parentElement.style.display=\'grid\'; this.parentElement.style.placeItems=\'center\'; this.parentElement.innerHTML=\'<div style=\'color:#64748b; font-size:13px;\'>画像がありません</div>\'">'+
-          (item.soldOut ? '<div class="soldout" aria-label="売り切れ">SOLD OUT</div>' : '')+
-          '<div class="overlay">'+
-            '<div class="ov-body">'+
-              '<div class="ov-team">'+ escapeHtml(item.team) +'</div>'+
-              '<div class="ov-name">'+ escapeHtml(item.name) +'</div>'+
-              '<div class="ov-price">'+ yen(item.price) +'</div>'+ noteOverlay +
-              '<div class="ov-hint" style="opacity:.8; font-size:11px; margin-top:8px;">タップでもう一度閉じる</div>'+ 
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, function(c){
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]);
+      });
+    }
+
+    function cardHTML(item){
+      var alt = escapeHtml(item.name + '（' + item.team + '）');
+      var noteOverlay = item.note ? '<div class="ov-note">'+ escapeHtml(item.note) +'</div>' : '';
+      var noteBody    = item.note ? '<div class="note">'+ escapeHtml(item.note) +'</div>' : '';
+      return ''+
+        '<article class="card" role="article">'+
+          '<div class="thumb" tabindex="0" role="button" aria-label="'+ alt +'の説明を表示" aria-expanded="false">'+
+            // onerror 内の style 引用符は &quot; で安全化
+            '<img src="'+ item.img +'" alt="'+ alt +'" onerror="this.style.display=\'none\'; this.parentElement.style.display=\'grid\'; this.parentElement.style.placeItems=\'center\'; this.parentElement.innerHTML=\'<div style=&quot;color:#64748b; font-size:13px;&quot;>画像がありません</div>\'">'+
+            (item.soldOut ? '<div class="soldout" aria-label="売り切れ">SOLD OUT</div>' : '')+
+            '<div class="overlay">'+
+              '<div class="ov-body">'+
+                '<div class="ov-team">'+ escapeHtml(item.team) +'</div>'+
+                '<div class="ov-name">'+ escapeHtml(item.name) +'</div>'+
+                '<div class="ov-desc">'+ escapeHtml(item.desc) +'</div>'+
+                '<div class="ov-price">'+ yen(item.price) +'</div>'+ noteOverlay +
+                '<div class="ov-hint" style="opacity:.8; font-size:11px; margin-top:8px;">タップでもう一度閉じる</div>'+ 
+              '</div>'+ 
             '</div>'+ 
           '</div>'+ 
-        '</div>'+ 
-        '<div class="body">'+
-          '<div class="team">'+ escapeHtml(item.team) +'</div>'+ 
-          '<div class="name">'+ escapeHtml(item.name) +'</div>'+ 
-          '<div class="price">'+ yen(item.price) +'</div>'+ 
-          noteBody +
-        '</div>'+ 
-      '</article>';
-  }
+          '<div class="body">'+
+            '<div class="team">'+ escapeHtml(item.team) +'</div>'+ 
+            '<div class="name">'+ escapeHtml(item.name) +'</div>'+ 
+            '<div class="price">'+ yen(item.price) +'</div>'+ 
+            noteBody +
+          '</div>'+ 
+        '</article>';
+    }
 
-  function bindThumbToggles(){
-    var thumbs = document.querySelectorAll('.thumb');
-    thumbs.forEach(function(el){
-      function toggle(){
-        var isOpen = el.classList.toggle('show');
-        el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      }
-      el.addEventListener('click', toggle);
-      el.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+    function bindThumbToggles(){
+      var thumbs = document.querySelectorAll('.thumb');
+      thumbs.forEach(function(el){
+        function toggle(){
+          var isOpen = el.classList.toggle('show');
+          el.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+        el.addEventListener('click', toggle);
+        el.addEventListener('keydown', function(e){
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); }
+        });
       });
-    });
-  }
+    }
 
-  function render(list){
-    grid.innerHTML = list.map(cardHTML).join('');
-    if (badge){ badge.textContent = list.length + ' 件表示中'; }
-    bindThumbToggles();
-  }
+    function render(list){
+      grid.innerHTML = list.map(cardHTML).join('');
+      if (badge){ badge.textContent = list.length + ' 件表示中'; }
+      bindThumbToggles();
+    }
 
-  try {
-    render(ITEMS);
-  } catch(e){
-    grid.innerHTML = '<div style="padding:16px; background:#fff; border:1px solid #fee2e2; color:#b91c1c; border-radius:12px;">表示中にエラーが発生しました：'+ e.message +'</div>';
-    console.error(e);
-  }
+    try { render(ITEMS); }
+    catch (e){
+      grid.innerHTML = '<div style="padding:16px; background:#fff; border:1px solid #fee2e2; color:#b91c1c; border-radius:12px;">表示中にエラー：'+ (e && e.message ? escapeHtml(e.message) : '') +'</div>';
+      console.error(e);
+    }
 
-  var updated = document.getElementById('updated');
-  if (updated){
-    var now = new Date();
-    updated.textContent = now.toLocaleString('ja-JP');
-  }
-})();
-</script>
+    var updated = document.getElementById('updated');
+    if (updated){ updated.textContent = new Date().toLocaleString('ja-JP'); }
+  })();
+  </script>
 </body>
 </html>
