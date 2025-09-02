@@ -69,17 +69,12 @@
       <div class="hero">
         <span class="dot" aria-hidden="true"></span>
         <div>
-          <h1>文化祭 食品バザー メニュー</h1>
-          <div class="sub">写真つき・価格表示／スマホで見やすいレスポンシブ</div>
+          <h1>Cultural Festival Food Bazaar Menu</h1>
+          <div class="sub">当日までに価格や分量等の変更があるかもしれません。また、売り切れてにつき販売ができない場合があります。</div>
         </div>
         <span class="badge" id="countBadge" aria-live="polite"></span>
       </div>
-      <div class="controls">
-        <label class="input" title="メニューやチーム名で検索">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="#64748b" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#64748b" stroke-width="2"/></svg>
-          <input id="q" placeholder="メニュー名やチーム名で検索…（例：焼きそば）" />
-        </label>
-      </div>
+      
     </div>
   </header>
 
@@ -97,18 +92,17 @@
     // 画像は /img フォルダに入れて、下の img に相対パスを書く。
     // soldOut を true にすると「SOLD OUT」表示。
     const ITEMS = [
-      { team: "1組 チーム青空", name: "焼きそば", price: 400, img: "img/yakisoba.jpg", soldOut:false, note:"" },
-      { team: "2組 チームひまわり", name: "フランクフルト", price: 300, img: "img/frankfurt.jpg", soldOut:false, note:"" },
-      { team: "3組 チームおにぎり", name: "おにぎり（鮭・梅）", price: 200, img: "img/onigiri.jpg", soldOut:false, note:"2個セット" },
-      { team: "4組 チームレモネード", name: "レモネード", price: 250, img: "img/lemonade.jpg", soldOut:false, note:"" },
-      { team: "5組 チームポテト", name: "フライドポテト", price: 300, img: "img/fries.jpg", soldOut:false, note:"塩/コンソメ" },
-      { team: "6組 チームクレープ", name: "クレープ（チョコ/バナナ）", price: 450, img: "img/crepe.jpg", soldOut:false, note:"" },
+      { team: "1A", name: "やきそば", price: 100, img: "img/1a.jpg", soldOut:false, note:"" },
+      { team: "1B", name: "お好み焼き", price: 100, img: "img/1b.jpg", soldOut:false, note:"1枚" },
+      { team: "2A", name: "からあげ", price: 200, img: "img/2a.jpg", soldOut:false, note:"5個入り" },
+      { team: "2B", name: "焼きトウモロコシ", price: 100, img: "img/2b.jpg", soldOut:false, note:"1本" },
+      { team: "3A", name: "みたらし団子", price: 200, img: "img/3a.jpg", soldOut:false, note:"3本入り" },
+      { team: "4A", name: "わたあめ", price: 100, img: "img/4a.jpg", soldOut:false, note:"" },
     ];
     // ▲▲ 編集ここまで ▲▲
     // ================================
 
     const grid = document.getElementById('grid');
-    const q = document.getElementById('q');
     const badge = document.getElementById('countBadge');
 
     function yen(n){ return `¥${Number(n).toLocaleString('ja-JP')}`; }
@@ -136,14 +130,6 @@
     }
 
     function normalize(s){ return s.toString().toLowerCase(); }
-
-    function doFilter(){
-      const v = normalize(q.value || '');
-      const filtered = ITEMS.filter(it => normalize(it.team+it.name+it.note).includes(v));
-      render(filtered);
-    }
-
-    q.addEventListener('input', doFilter);
 
     // 初期表示
     render(ITEMS);
