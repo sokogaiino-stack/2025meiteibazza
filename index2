@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>読んだ本の記録（2025）</title>
+  <style>
+    /* ===== ベース ===== */
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --ring:#e5e7eb;
+      --shadow:0 6px 16px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 100% -10%, #e8efff 0%, transparent 60%),
+        radial-gradient(800px 400px at -10% 110%, #ffeef3 0%, transparent 55%),
+        var(--bg);
+      line-height:1.6;
+    }
+
+    .container{
+      max-width: 1100px;
+      padding: 24px;
+      margin: 0 auto;
+    }
+
+    header h1{
+      margin: 0 0 4px 0;
+      font-size: clamp(22px, 3vw, 32px);
+      letter-spacing:.02em;
+    }
+    header p{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin: 8px 0 18px;
+    }
+    .btn{
+      appearance:none;
+      border:1px solid var(--ring);
+      background:var(--card);
+      padding:8px 12px;
+      border-radius:10px;
+      box-shadow: var(--shadow);
+      cursor:pointer;
+      font-size:14px;
+    }
+    .btn:active{transform:translateY(1px)}
+    .search{
+      flex:1;
+      min-width:220px;
+      padding:9px 12px;
+      border-radius:10px;
+      border:1px solid var(--ring);
+      background:var(--card);
+      box-shadow: var(--shadow) inset 0 0 0 rgba(0,0,0,0);
+      outline:none;
+      font-size:14px;
+    }
+
+    /* ===== グリッド ===== */
+    .grid{
+      display:grid;
+      gap:16px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    /* ===== カード（<details> をカード風に） ===== */
+    details.card{
+      background:var(--card);
+      border:1px solid var(--ring);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      transition: border-color .2s ease, box-shadow .2s ease;
+      --accent:#7c3aed; /* デフォルト（個別に上書き） */
+      position:relative;
+    }
+    /* 上部のアクセントバー */
+    details.card::before{
+      content:"";
+      position:absolute; inset:0 0 auto 0;
+      height:6px; background:var(--accent);
+    }
+
+    /* summary（クリック部分） */
+    details.card > summary{
+      list-style:none;
+      padding:16px 44px 16px 16px;
+      cursor:pointer;
+      outline:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:600;
+      user-select:none;
+    }
+    /* Safari/Chromeのデフォルト三角を消す */
+    details.card > summary::-webkit-details-marker{display:none}
+
+    /* 月バッジ */
+    .badge{
+      display:inline-grid; place-items:center;
+      width:40px; height:40px; border-radius:12px;
+      background: color-mix(in srgb, var(--accent) 18%, #fff);
+      color: color-mix(in srgb, var(--accent) 80%, #000);
+      font-variant-numeric:tabular-nums;
+      box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent) 28%, #fff);
+      flex: 0 0 auto;
+    }
+    .title{
+      display:flex; flex-direction:column;
+    }
+    .title small{color:var(--muted); font-weight:500}
+
+    /* 開閉アイコン */
+    details.card > summary::after{
+      content:"▾";
+      position:absolute; right:12px;
+      font-size:16px; line-height:1;
+      transform: rotate(-90deg);
+      transition: transform .2s ease;
+      color:var(--muted);
+    }
+    details.card[open] > summary::after{
+      transform: rotate(0deg);
+    }
+
+    /* コンテンツ */
+    .content{
+      padding: 8px 16px 18px 16px;
+      border-top:1px dashed #e5e7eb;
+      background:
+        linear-gradient(180deg, #fff, #fff8);
+    }
+    .content p.hint{
+      margin:6px 0 12px;
+      color:var(--muted); font-size:12px;
+    }
+    .books{margin:0; padding:0 0 0 18px}
+    .books li{padding:4px 0}
+    .hit{background: #fff7cc; border-radius:6px; box-shadow: inset 0 0 0 2px #ffe27a; padding:1px 4px}
+
+    footer{
+      color:var(--muted); font-size:12px; margin-top:22px;
+    }
+
+    /* 小さめ画面の余白調整 */
+    @media (max-width:420px){
+      .badge{width:36px;height:36px}
+      details.card > summary{padding-right:38px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>読んだ本の記録（2025）</h1>
+      <p>各月のカードをクリックすると、その月に読んだ本のリストが開きます。編集はコード内の <code>&lt;ul class="books"&gt;</code> を書き換えてください。</p>
+    </header>
+
+    <div class="toolbar">
+      <input id="q" class="search" type="search" placeholder="タイトル・著者で検索（自動で該当月を開きます）" />
+      <button class="btn" id="openAll">すべて開く</button>
+      <button class="btn" id="closeAll">すべて閉じる</button>
+    </div>
+
+    <section class="grid" id="grid">
+      <!-- ▼ 1〜12月のカード。--accent を月ごとに変えて見栄えを少しだけ変えています。 -->
+      <details class="card" style="--accent:#EF4444" id="m1">
+        <summary>
+          <span class="badge">1月</span>
+          <span class="title">January <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <p class="hint">例を消して、あなたの本に差し替えてください。</p>
+          <ul class="books">
+            <li>本のタイトルA — 著者名A</li>
+            <li>本のタイトルB — 著者名B</li>
+            <li>本のタイトルC — 著者名C</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#F59E0B" id="m2">
+        <summary>
+          <span class="badge">2月</span>
+          <span class="title">February <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#10B981" id="m3">
+        <summary>
+          <span class="badge">3月</span>
+          <span class="title">March <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#06B6D4" id="m4">
+        <summary>
+          <span class="badge">4月</span>
+          <span class="title">April <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#3B82F6" id="m5">
+        <summary>
+          <span class="badge">5月</span>
+          <span class="title">May <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#6366F1" id="m6">
+        <summary>
+          <span class="badge">6月</span>
+          <span class="title">June <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#8B5CF6" id="m7">
+        <summary>
+          <span class="badge">7月</span>
+          <span class="title">July <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#EC4899" id="m8">
+        <summary>
+          <span class="badge">8月</span>
+          <span class="title">August <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#14B8A6" id="m9">
+        <summary>
+          <span class="badge">9月</span>
+          <span class="title">September <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#22C55E" id="m10">
+        <summary>
+          <span class="badge">10月</span>
+          <span class="title">October <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#A855F7" id="m11">
+        <summary>
+          <span class="badge">11月</span>
+          <span class="title">November <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="card" style="--accent:#F97316" id="m12">
+        <summary>
+          <span class="badge">12月</span>
+          <span class="title">December <small>読了リスト</small></span>
+        </summary>
+        <div class="content">
+          <ul class="books">
+            <li>本のタイトル — 著者名</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <footer>
+      ヒント：検索ボックスに文字を入れると、一致する本がハイライトされ、該当月が自動で開きます。
+    </footer>
+  </div>
+
+  <script>
+    // すべて開く/閉じる
+    const all = () => Array.from(document.querySelectorAll('details.card'));
+    document.getElementById('openAll').addEventListener('click', () => all().forEach(d => d.open = true));
+    document.getElementById('closeAll').addEventListener('click', () => all().forEach(d => d.open = false));
+
+    // 検索：一致箇所をハイライトし、含む月を開く
+    const q = document.getElementById('q');
+    const clearHits = () => document.querySelectorAll('.hit').forEach(n=>{
+      const parent = n.parentNode;
+      parent.replaceChild(document.createTextNode(n.textContent), n);
+      parent.normalize();
+    });
+
+    q.addEventListener('input', () => {
+      const term = q.value.trim();
+      clearHits();
+      if(!term){ return; }
+
+      const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+      const cards = all();
+      cards.forEach(d => {
+        let openedBySearch = false;
+        d.querySelectorAll('.books li').forEach(li => {
+          const text = li.textContent;
+          if(regex.test(text)){
+            // ハイライト
+            li.innerHTML = text.replace(regex, m => `<span class="hit">${m}</span>`);
+            openedBySearch = true;
+          }
+          regex.lastIndex = 0; // ループでの再利用に必要
+        });
+        if(openedBySearch) d.open = true;
+      });
+    });
+
+    // Enterで最初の一致月へスクロール
+    q.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter'){
+        const firstHit = document.querySelector('.hit');
+        if(firstHit){
+          firstHit.closest('details').open = true;
+          firstHit.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+      }
+    });
+  </script>
+</body>
+</html>
